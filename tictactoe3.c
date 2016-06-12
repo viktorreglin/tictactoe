@@ -209,18 +209,20 @@ int checkWin( int board[3][3], int player ){
 //gibt Erklärungen aus falls der Programmaufruf inkorrekt war
 void usage(  )
 {
-   printf("\nUSAGE: tictactoe MODE PLAYER\n\n");
-   printf("                   MODE is 10 for user vs user, 20 for user vs ai, 30 for ai vs ai \n");
-   printf("                        PLAYER indicates who goes first, needs to be x or o \n\n");
+   printf( "\n" );
+   printf( "USAGE: tictactoe MODE PLAYER FIRST\n\n" );
+   printf( "                 MODE is 10 for user vs user, 20 for user vs ai, 30 for ai vs ai \n" );
+   printf( "                      PLAYER indicates who goes first, needs to be x or o \n" );
+   printf( "                             FIRST is 21 if user starts, 22 if ai starts \n\n" );
    exit( 1 );
 }
 
 
 int main( int argc, char * argv[] ){
     char wiederholen[80] = "j", playerSymbol;
-    int mode, player, startingPlayer;
+    int mode, player, startingPlayer, first;
 
-    if( argc != 3 )
+    if( argc != 4 )
         usage();
 
     mode = atoi( argv[1] ); //erster Parameter für Modus
@@ -228,12 +230,16 @@ int main( int argc, char * argv[] ){
         usage();
     
     playerSymbol = *argv[2]; //zweiter Parameter für anfangenden Spieler
-    
     if( playerSymbol != 'x' && playerSymbol != 'o' )
+        usage();
+    
+    first = atoi( argv[3] );
+    if( first != 21 && first != 22 )
         usage();
     
     player = playerSymbol == 'x' ? 1 : -1;
     startingPlayer = player;
+        
     
     do{
         player = startingPlayer;
@@ -250,7 +256,7 @@ int main( int argc, char * argv[] ){
                 
             case 20:
                 printf( "Modus %d --> Spieler vs KI\n\n", mode );
-                printf( "Spieler beginnt\n" );
+                first == 21 ? printf( "Spieler beginnt\n" ) : printf( "Computer beginnt\n" );
                 break;
                 
             case 30:
@@ -289,10 +295,17 @@ int main( int argc, char * argv[] ){
                         break;
                         
                     case 20:
-                        if( player == startingPlayer ){
-                            printf( "Feldnummer eingeben (1 bis 9): " );
-                            scanf( "%d", &fieldNumber ); //Zeile und Spalte einlesen, jeweils von 0 bis 2
-                        } else fieldNumber = aiMove( board, player );
+                        if( first == 21 ){
+                            if( player == startingPlayer ){
+                                printf( "Feldnummer eingeben (1 bis 9): " );
+                                scanf( "%d", &fieldNumber ); //Zeile und Spalte einlesen, jeweils von 0 bis 2
+                            } else fieldNumber = aiMove( board, player );
+                        } else if( player == startingPlayer ){
+                                fieldNumber = aiMove( board, player );
+                            } else {
+                                printf( "Feldnummer eingeben (1 bis 9): " );
+                                scanf( "%d", &fieldNumber ); //Zeile und Spalte einlesen, jeweils von 0 bis 2
+                            }
                         break;
                         
                     case 30:
